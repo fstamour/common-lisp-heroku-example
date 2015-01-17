@@ -24,9 +24,11 @@
 ;;; Called at application initialization time.
 (defun cl-user::initialize-application ()
   ;; This has to be done at app-init rather than app-build time, to point to right directory.
-  (publish-directory
-   :prefix "/"
-   :destination (namestring (truename "./public/")))
+  (let ((public (pathname "./public/")))
+    (when public 
+      (publish-directory
+       :prefix "/"
+       :destination (namestring public))))
   (wu:wuwei-initialize-application))
 
 
