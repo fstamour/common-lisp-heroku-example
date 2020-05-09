@@ -1,35 +1,24 @@
-(in-package :net.aserve)
 
-(publish :path "/"
-	 :function #'(lambda (req ent)
-		       (with-http-response (req ent)
-			 (with-http-body (req ent)
-			   (html
-			     (:head 
-			      (:title "Hello Lisp on Heroku"))
-			     ((:body :style "font-family: 'Arial'")
-			      (:h1 "(Hello 'World)")
-			      "Congratulations, you are running Lisp on "
-			      ((:a :href "http://heroku.com") "Heroku") 
-			      "!!!"
-			      :p
-			      ((:a :href "/db-demo") "Database demo")
-			      :p
-			      "More details at "
-			      ((:a :href "https://github.com/mtravers/heroku-cl-example/blob/master/README.md") "the README on github")
-			      :p
-			      ((:img :src "lisp-glossy.jpg"))
-			      ))))))
+(in-package #:common-lisp-user)
+
+(defpackage #:example
+  (:use :cl)
+  (:export #:start))
+
+(in-package #:example)
+
+(defvar *port* 8080)
+
+(defvar *server*
+  (make-instance 'hunchentoot:easy-acceptor
+		 :port *port*))
 
 ;;; Called at application initialization time.
-(defun cl-user::initialize-application ()
-  ;; This has to be done at app-init rather than app-build time, to point to right directory.
-  (let ((public (pathname "./public/")))
-    (when public 
-      (publish-directory
-       :prefix "/"
-       :destination (namestring public))))
-  (wu:wuwei-initialize-application))
+(defun start ()
+  (hunchentoot:start *server*)
+  (format t "~&Server started on port ~d." *port*)
+  (force-output)
+  (loop :do (sleep 10)))
 
 
 

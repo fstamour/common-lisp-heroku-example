@@ -1,5 +1,6 @@
-(in-package :net.aserve)
+(in-package #:example)
 
+#+nil
 (publish :path "/db-demo"
 	 :function
 	 #'(lambda (req ent)
@@ -101,7 +102,7 @@ padding: 4px;
 	(setup-local-test-db ))))
 
 (defun setup-heroku-db ()
-  (setq *db-spec* (parse-heroku-db (ccl:getenv "DATABASE_URL"))))
+  (setq *db-spec* (parse-heroku-db (uiop:getenv "DATABASE_URL"))))
 
 (defun setup-local-test-db ()
   (setq *db-spec*
@@ -182,6 +183,7 @@ padding: 4px;
 
 
 ;;; This URL inits and performs some tests on the DB, logging output
+#+nil
 (publish :path "/db-init"
 	 :function #'(lambda (req ent)
 		       (with-http-response (req ent)
@@ -196,7 +198,7 @@ padding: 4px;
 
 ;;; Not necessarily the best test, presumably won't work on apps with db not installed
 (defun on-heroku? ()
-  (ccl:getenv "DATABASE_URL"))
+  (uiop:getenv "DATABASE_URL"))
 
 (defun html-lines-out (string)
   (dolist (line (cl-ppcre:split "\\n" string))

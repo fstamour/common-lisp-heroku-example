@@ -1,0 +1,35 @@
+FROM ubuntu:latest AS basepakages
+
+# Install OS-level dependencies
+RUN apt-get update
+RUN apt-get install -y sbcl curl libpq-dev
+
+# Install quicklisp and some dependencies (regardless of the asd) for
+# faster builds.
+FROM basepakages AS quicklisp
+RUN curl 'https://beta.quicklisp.org/quicklisp.lisp' > quicklisp.lisp
+RUN sbcl --non-interactive \
+    --load "/quicklisp.lisp" \
+    --eval "(quicklisp-quickstart:install)" \
+    --eval "(ql:quickload '(ironclad cffi alexandria))"
+
+# Install the missing dependencies from the asd file
+FROM quicklisp AS dependencies
+COPY --from=quicklisp /root/ /root/
+RUN mkdir /example
+WORKDIR /example
+COPY example.asd compile-dependencies.lisp ./
+
+RUN sbcl --disable-debugger --load '/root/quicklisp/setup.lisp' \
+	 --load 'compile-dependencies.lisp'
+
+FROM basepakages AS example
+COPY --from=dependencies /root/ /root/
+RUN mkdir /example
+WORKDIR /example
+COPY --from=dependencies /example/dependencies.core dependencies.core
+COPY . .
+RUN sbcl --core 'dependencies.core'
+
+ENTRYPOINT [ "./lispapp" ]
+
