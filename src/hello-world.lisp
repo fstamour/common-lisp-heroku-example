@@ -7,7 +7,8 @@
 
 (in-package #:example)
 
-(defvar *port* 8080)
+(defvar *port* (or (parse-integer (uiop:getenv "PORT"))
+		   8080))
 
 (defvar *server*
   (make-instance 'hunchentoot:easy-acceptor
