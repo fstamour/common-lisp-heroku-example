@@ -5,8 +5,8 @@ heroku using docker.
 
 ## Instructions:
 
-[Fork this project](/fstamour/heroku-cl-example/fork_select) (and
-optionally modify it with your own content).
+[Fork](/fstamour/heroku-cl-example/fork_select) or clone this project
+(and optionally modify it with your own content).
 
 Get yourself set up with a [Heroku account and
 tools](http://devcenter.heroku.com/articles/quickstart).
@@ -27,7 +27,6 @@ Create your own Heroku application:
 ```shell
 $ heroku create
 ```
-Take note of the name of the app created. Let's say it's `app-name`.
 
 Then you can push the docker image to heroku's repository (the docker image
 will be built locally):
